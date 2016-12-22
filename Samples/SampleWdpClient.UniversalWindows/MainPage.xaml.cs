@@ -79,8 +79,8 @@ namespace SampleWdpClient.UniversalWindows
             portal = new DevicePortal(
                 new DefaultDevicePortalConnection(
                     this.address.Text,
-                    this.username.Text,
-                    this.password.Password));
+                    this.username.Text.Length == 0 ? "a" : this.username.Text,
+                    this.password.Password.Length==0?"a":this.password.Password));
 
             StringBuilder sb = new StringBuilder();
             Task connectTask = new Task(
@@ -103,7 +103,6 @@ namespace SampleWdpClient.UniversalWindows
                             sb.AppendLine(String.Format("{0} ({1})",
                                 portal.PlatformName,
                                 portal.Platform.ToString()));
-                            
                         }
                         else if (connectArgs.Status == DeviceConnectionStatus.Failed)
                         {
