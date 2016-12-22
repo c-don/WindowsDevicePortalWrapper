@@ -11,6 +11,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Tools.WindowsDevicePortal;
 using static Microsoft.Tools.WindowsDevicePortal.DevicePortal;
+using System.Collections.Generic;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace SampleWdpClient.UniversalWindows
 {
@@ -23,6 +26,8 @@ namespace SampleWdpClient.UniversalWindows
         /// The device portal to which we are connecting.
         /// </summary>
         private DevicePortal portal;
+
+        private List<DevicePortal> listDevices = new List<DevicePortal>();
 
         private Certificate certificate;
 
@@ -98,6 +103,7 @@ namespace SampleWdpClient.UniversalWindows
                             sb.AppendLine(String.Format("{0} ({1})",
                                 portal.PlatformName,
                                 portal.Platform.ToString()));
+                            
                         }
                         else if (connectArgs.Status == DeviceConnectionStatus.Failed)
                         {
@@ -141,11 +147,12 @@ namespace SampleWdpClient.UniversalWindows
         /// </summary>
         private void EnableConnectButton()
         {
-            bool enable = (!string.IsNullOrWhiteSpace(this.address.Text) &&
+            bool enable = (!string.IsNullOrWhiteSpace(this.address.Text) /*&&
                         !string.IsNullOrWhiteSpace(this.username.Text) &&
-                        !string.IsNullOrWhiteSpace(this.password.Password));
+                        !string.IsNullOrWhiteSpace(this.password.Password)*/);
 
             this.connectToDevice.IsEnabled = enable;
+            this.AddDevice.IsEnabled = enable;
         }
 
         /// <summary>
@@ -506,6 +513,22 @@ namespace SampleWdpClient.UniversalWindows
             catch (Exception exception)
             {
                 this.commandOutput.Text = "Failed to get cert file: " + exception.Message;
+            }
+        }
+
+        private void AddDevice_Click(object sender, RoutedEventArgs e)
+        {
+            listDevices.Add(portal);
+            ShowAddedDevices();
+        }
+
+        private void ShowAddedDevices()
+        {
+            AddDeviceBorder.Visibility = Visibility.Visible;
+            foreach(DevicePortal device in listDevices)
+            {
+                DeviceOne.Text = device.Address;
+                DeviceOne.Text += "\n";
             }
         }
     }

@@ -13,8 +13,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="addressLabel" Grid.Column="0" HorizontalAlignment="Left" Margin="15,18,0,0" TextWrapping="Wrap" Text="Device Address" VerticalAlignment="Top" Height="20" Width="71"/>
-        <TextBox x:Name="address" Grid.Column="0" Margin="91,12,15,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="32" TextChanged="Address_TextChanged"/>
+        <TextBlock x:Name="addressLabel" Grid.Column="0" HorizontalAlignment="Left" Margin="15,18,0,0" TextWrapping="Wrap" Text="Device Address" VerticalAlignment="Top" Height="20" Width="105"/>
+        <TextBox x:Name="address" Grid.Column="0" Margin="155,12,15,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="32" TextChanged="Address_TextChanged"/>
         <TextBlock x:Name="usernameLabel" Grid.Column="0" HorizontalAlignment="Left" Margin="15,55,0,0" TextWrapping="Wrap" Text="User name" VerticalAlignment="Top" Height="20" Width="71"/>
         <TextBox x:Name="username" Grid.Column="0" Margin="91,49,15,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="32" TextChanged="Username_TextChanged"/>
         <TextBlock x:Name="passwordLabel" Grid.Column="0" HorizontalAlignment="Left" Margin="15,92,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Height="20" Width="62"/>
@@ -22,7 +22,8 @@
         <Button x:Name="connectToDevice" Content="Connect" Grid.Column="0" HorizontalAlignment="Left" Margin="16,123,0,0" VerticalAlignment="Top" Width="93" Click="ConnectToDevice_Click" Height="32" IsEnabled="False"/>
         <Button x:Name="rebootDevice" Content="Reboot" Grid.Column="0" HorizontalAlignment="Left" Margin="114,123,0,0" VerticalAlignment="Top" Width="93" Click="RebootDevice_Click" IsEnabled="False" Height="32"/>
         <Button x:Name="shutdownDevice" Content="Shutdown" Grid.Column="0" HorizontalAlignment="Left" Margin="212,123,0,0" VerticalAlignment="Top" Width="93" Click="ShutdownDevice_Click" IsEnabled="False" Height="32"/>
-
+        
+        <Button x:Name="AddDevice" Content="Add Device" Grid.Column="0" HorizontalAlignment="Left" Margin="310,123,0,0" VerticalAlignment="Top" Width="93" Click="AddDevice_Click" IsEnabled="False" Height="32"/>
         <Button x:Name="loadCert" Content="Add Trusted Certificate" Grid.Column="0" HorizontalAlignment="Left" Margin="12,225,0,0" VerticalAlignment="Top" Width="175" Click="LoadCertificate_Click" Height="32"/>
         <CheckBox x:Name="allowUntrustedCheckbox" Content="Allow Untrusted Connections (Not Recommended)" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="27,257,0,0"></CheckBox>
 
@@ -30,6 +31,10 @@
 
         <Button x:Name="getIPConfig" Content="Get IP Config" Grid.Column="0" HorizontalAlignment="Left" Margin="12,166,0,0" VerticalAlignment="Top" Width="144" Click="GetIPConfig_Click" IsEnabled="False"/>
         <Button x:Name="getWiFiInfo" Content="Get WiFi Info" Grid.Column="0" HorizontalAlignment="Left" Margin="161,166,0,0" VerticalAlignment="Top" Width="144" Click="GetWifiInfo_Click" IsEnabled="False"/>
+        
+        <Border x:Name="AddDeviceBorder" Grid.Column="0" BorderBrush="Black" BorderThickness="1" Height="1" Margin="15,300,15,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+        <TextBlock x:Name="DeviceOne" Margin="15,310,15,0"/>
+
 
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Grid.Column="1" Margin="0,15,0,15" Width="2" RenderTransformOrigin="0.5,0.5" />
 
