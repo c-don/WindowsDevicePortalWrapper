@@ -49,7 +49,16 @@ namespace SampleWdpClient.UniversalWindows
         {
             EnableConnectButton();
         }
-
+        
+        /// <summary>
+        /// TextChanged handler for the package path textbox
+        /// </summary>
+        /// <param name="sender">The caller of this method.</param>
+        /// <param name="e">The arguments associated with this event.</param>
+        private void PackagePath_Changed(object sender, TextChangedEventArgs e)
+        {
+            EnableInstallButton();
+        }
         /// <summary>
         /// If specified in the UI, clears the test output display, otherwise does nothing.
         /// </summary>
@@ -153,7 +162,17 @@ namespace SampleWdpClient.UniversalWindows
             this.connectToDevice.IsEnabled = enable;
             this.AddDevice.IsEnabled = enable;
         }
+        
+        /// <summary>
+        /// Enables or disables the Install button based on the current state of the
+        /// package path field.
+        /// </summary>
+        private void EnableInstallButton()
+        {
+            bool enable = (!string.IsNullOrWhiteSpace(this.packagePath.Text) );
 
+            this.installAppButton.IsEnabled = enable;
+        }
         /// <summary>
         /// Sets the IsEnabled property appropriately for the connection controls.
         /// </summary>
@@ -175,134 +194,8 @@ namespace SampleWdpClient.UniversalWindows
         {
             this.rebootDevice.IsEnabled = enable;
             this.shutdownDevice.IsEnabled = enable;
-
-            this.getIPConfig.IsEnabled = enable;
-            this.getWiFiInfo.IsEnabled = enable;
         }
-
-        /// <summary>
-        /// Click handler for the getIpConfig button.
-        /// </summary>
-        /// <param name="sender">The caller of this method.</param>
-        /// <param name="e">The arguments associated with this event.</param>
-        private void GetIPConfig_Click(object sender, RoutedEventArgs e)
-        {
-            this.ClearOutput();
-            this.EnableConnectionControls(false);
-            this.EnableDeviceControls(false);
-
-            StringBuilder sb = new StringBuilder();
-            Task getTask = new Task(
-                async () =>
-                {
-                    sb.Append(this.MarshalGetCommandOutput());
-                    sb.AppendLine("Getting IP configuration...");
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-
-                    try
-                    {
-                        IpConfiguration ipconfig = await portal.GetIpConfigAsync();
-
-                        foreach (NetworkAdapterInfo adapterInfo in ipconfig.Adapters)
-                        {
-                            sb.Append(" ");
-                            sb.AppendLine(adapterInfo.Description);
-                            sb.Append("  MAC address :");
-                            sb.AppendLine(adapterInfo.MacAddress);
-                            foreach (IpAddressInfo address in adapterInfo.IpAddresses)
-                            {
-                                sb.Append("  IP address :");
-                                sb.AppendLine(address.Address);
-                            }
-                            sb.Append("  DHCP address :");
-                            sb.AppendLine(adapterInfo.Dhcp.Address.Address);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        sb.AppendLine("Failed to get IP config info.");
-                        sb.AppendLine(ex.GetType().ToString() + " - " + ex.Message);
-                    }
-                });
-
-            Task continuationTask = getTask.ContinueWith(
-                (t) =>
-                {
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-                    this.MarshalEnableDeviceControls(true);
-                    this.MarshalEnableConnectionControls(true);
-                });
-
-            getTask.Start();
-        }
-
-        /// <summary>
-        /// Click handler for the getWifiInfo button.
-        /// </summary>
-        /// <param name="sender">The caller of this method.</param>
-        /// <param name="e">The arguments associated with this event.</param>
-        private void GetWifiInfo_Click(object sender, RoutedEventArgs e)
-        {
-            this.ClearOutput();
-            this.EnableConnectionControls(false);
-            this.EnableDeviceControls(false);
-
-            StringBuilder sb = new StringBuilder();
-            Task getTask = new Task(
-                async () =>
-                {
-                    sb.Append(this.MarshalGetCommandOutput());
-                    sb.AppendLine("Getting WiFi interfaces and networks...");
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-
-                    try
-                    {
-                        WifiInterfaces wifiInterfaces = await portal.GetWifiInterfacesAsync();
-                        sb.AppendLine("WiFi Interfaces:");
-                        foreach (WifiInterface wifiInterface in wifiInterfaces.Interfaces)
-                        {
-                            sb.Append(" ");
-                            sb.AppendLine(wifiInterface.Description);
-                            sb.Append("  GUID: ");
-                            sb.AppendLine(wifiInterface.Guid.ToString());
-
-                            WifiNetworks wifiNetworks = await portal.GetWifiNetworksAsync(wifiInterface.Guid);
-                            sb.AppendLine("  Networks:");
-                            foreach (WifiNetworkInfo network in wifiNetworks.AvailableNetworks)
-                            {
-                                sb.Append("   SSID: ");
-                                sb.AppendLine(network.Ssid);
-                                sb.Append("   Profile name: ");
-                                sb.AppendLine(network.ProfileName);
-                                sb.Append("   is connected: ");
-                                sb.AppendLine(network.IsConnected.ToString());
-                                sb.Append("   Channel: ");
-                                sb.AppendLine(network.Channel.ToString());
-                                sb.Append("   Authentication algorithm: ");
-                                sb.AppendLine(network.AuthenticationAlgorithm);
-                                sb.Append("   Signal quality: ");
-                                sb.AppendLine(network.SignalQuality.ToString());
-                            }
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        sb.AppendLine("Failed to get WiFi info.");
-                        sb.AppendLine(ex.GetType().ToString() + " - " + ex.Message);
-                    }
-                });
-
-            Task continuationTask = getTask.ContinueWith(
-                (t) =>
-                {
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-                    this.MarshalEnableDeviceControls(true);
-                    this.MarshalEnableConnectionControls(true);
-                });
-
-            getTask.Start();
-        }
-
+        
         /// <summary>
         /// Executes the EnabledConnectionControls method on the UI thread.
         /// </summary>
@@ -523,11 +416,25 @@ namespace SampleWdpClient.UniversalWindows
 
         private void ShowAddedDevices()
         {
+            DeviceOne.Text = "";
             AddDeviceBorder.Visibility = Visibility.Visible;
             foreach(DevicePortal device in listDevices)
             {
-                DeviceOne.Text = device.Address;
+                DeviceOne.Text += device.Address;
                 DeviceOne.Text += "\n";
+            }
+        }
+
+        private void InstallApp_Click(object sender, RoutedEventArgs e)
+        {
+            this.ClearOutput();
+
+            foreach (DevicePortal device in listDevices)
+            {
+                InstallOperation operation = new InstallOperation(portal);
+                portal.AppInstallStatus += operation.AppInstallStatusHandler;
+
+                Task getTask = device.InstallApplicationAsync(null, packagePath.Text, null);
             }
         }
     }
