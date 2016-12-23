@@ -445,6 +445,11 @@ namespace SampleWdpClient.UniversalWindows
                 filePicker.FileTypeFilter.Add(".appxbundle");
                 StorageFile file = await filePicker.PickSingleFileAsync();
 
+                Windows.ApplicationModel.Package package = Windows.ApplicationModel.Package.Current;
+                Windows.Storage.StorageFolder installedLocation = package.InstalledLocation;
+
+                String output = String.Format("Installed Location: {0}", installedLocation.Path);
+
                 if (file != null)
                 {
                     packagePath.Text = file.Path;

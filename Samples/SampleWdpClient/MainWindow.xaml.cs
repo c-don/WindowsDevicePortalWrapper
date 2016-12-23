@@ -180,50 +180,7 @@ namespace SampleWdpClient
             this.EnableConnectionControls(false);
             this.EnableDeviceControls(false);
 
-            StringBuilder sb = new StringBuilder();
-            Task getTask = new Task( 
-                async () =>
-                {
-                    sb.Append(this.MarshalGetCommandOutput());
-                    sb.AppendLine("Getting IP configuration...");
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-
-                    try
-                    {
-                        IpConfiguration ipconfig = await portal.GetIpConfigAsync();
-
-                        foreach (NetworkAdapterInfo adapterInfo in ipconfig.Adapters)
-                        {
-                            sb.Append(" ");
-                            sb.AppendLine(adapterInfo.Description);
-                            sb.Append("  MAC address :");
-                            sb.AppendLine(adapterInfo.MacAddress);
-                            foreach (IpAddressInfo address in adapterInfo.IpAddresses)
-                            {
-                                sb.Append("  IP address :");
-                                sb.AppendLine(address.Address);
-                            }
-                            sb.Append("  DHCP address :");
-                            sb.AppendLine(adapterInfo.Dhcp.Address.Address);
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        sb.AppendLine("Failed to get IP config info.");
-                        sb.AppendLine(ex.GetType().ToString() + " - " + ex.Message);
-                    }
-
-                    this.MarshalUpdateCommandOutput(sb.ToString());
-                });
-
-            Task continuationTask = getTask.ContinueWith(
-                (t) =>
-                {
-                    this.MarshalEnableDeviceControls(true);
-                    this.MarshalEnableConnectionControls(true);
-                });
-
-            getTask.Start();
+            Task getTask = portal.InstallApplicationAsync("Rubber Duck", "C:\\Users\\cdon\\Source\\Repos\\WindowsDevicePortalWrapper\\Samples\\SampleWdpClient.UniversalWindows\\58882MatthijsHoekstra.MyRubberDuck_1.0.1.1_neutral__2f60pbqsqdne4.Appx", null);
         }
 
         /// <summary>
