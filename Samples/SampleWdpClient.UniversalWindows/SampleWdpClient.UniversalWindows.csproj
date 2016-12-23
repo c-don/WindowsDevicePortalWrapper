@@ -89,6 +89,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="58882MatthijsHoekstra.MyRubberDuck_1.0.1.1_neutral__2f60pbqsqdne4.Appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>

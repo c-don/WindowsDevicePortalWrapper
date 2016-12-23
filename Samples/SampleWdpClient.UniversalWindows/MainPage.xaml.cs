@@ -49,7 +49,7 @@ namespace SampleWdpClient.UniversalWindows
         {
             EnableConnectButton();
         }
-        
+
         /// <summary>
         /// TextChanged handler for the package path textbox
         /// </summary>
@@ -89,7 +89,7 @@ namespace SampleWdpClient.UniversalWindows
                 new DefaultDevicePortalConnection(
                     this.address.Text,
                     this.username.Text.Length == 0 ? "a" : this.username.Text,
-                    this.password.Password.Length==0?"a":this.password.Password));
+                    this.password.Password.Length == 0 ? "a" : this.password.Password));
 
             StringBuilder sb = new StringBuilder();
             Task connectTask = new Task(
@@ -162,14 +162,14 @@ namespace SampleWdpClient.UniversalWindows
             this.connectToDevice.IsEnabled = enable;
             this.AddDevice.IsEnabled = enable;
         }
-        
+
         /// <summary>
         /// Enables or disables the Install button based on the current state of the
         /// package path field.
         /// </summary>
         private void EnableInstallButton()
         {
-            bool enable = (!string.IsNullOrWhiteSpace(this.packagePath.Text) );
+            bool enable = (!string.IsNullOrWhiteSpace(this.packagePath.Text));
 
             this.installAppButton.IsEnabled = enable;
         }
@@ -195,7 +195,7 @@ namespace SampleWdpClient.UniversalWindows
             this.rebootDevice.IsEnabled = enable;
             this.shutdownDevice.IsEnabled = enable;
         }
-        
+
         /// <summary>
         /// Executes the EnabledConnectionControls method on the UI thread.
         /// </summary>
@@ -418,7 +418,7 @@ namespace SampleWdpClient.UniversalWindows
         {
             DeviceOne.Text = "";
             AddDeviceBorder.Visibility = Visibility.Visible;
-            foreach(DevicePortal device in listDevices)
+            foreach (DevicePortal device in listDevices)
             {
                 DeviceOne.Text += device.Address;
                 DeviceOne.Text += "\n";
@@ -431,10 +431,28 @@ namespace SampleWdpClient.UniversalWindows
 
             foreach (DevicePortal device in listDevices)
             {
-                InstallOperation operation = new InstallOperation(portal);
-                portal.AppInstallStatus += operation.AppInstallStatusHandler;
+                Task getTask = device.InstallApplicationAsync("Rubber Duck", packagePath.Text, null);
+            }
+        }
 
-                Task getTask = device.InstallApplicationAsync(null, packagePath.Text, null);
+        private async void BrowseToFile(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FileOpenPicker filePicker = new FileOpenPicker();
+                filePicker.SuggestedStartLocation = PickerLocationId.Desktop;
+                filePicker.FileTypeFilter.Add(".appx");
+                filePicker.FileTypeFilter.Add(".appxbundle");
+                StorageFile file = await filePicker.PickSingleFileAsync();
+
+                if (file != null)
+                {
+                    packagePath.Text = file.Path;
+                }
+            }
+            catch (Exception exception)
+            {
+                this.commandOutput.Text = "Failed to get app package file: " + exception.Message;
             }
         }
     }
